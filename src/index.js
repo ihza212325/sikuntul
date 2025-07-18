@@ -11,8 +11,8 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-cron.schedule("*/5 * * * * *", async () => {
-  console.log("running a task every 5 seconds");
+cron.schedule("0 1 * * *", async () => {
+  console.log("Running daily TradingView scanner at 8 AM WIB (1 AM UTC)");
 
   try {
     const requestBody = {
@@ -313,6 +313,9 @@ cron.schedule("*/5 * * * * *", async () => {
               to: [
                 {
                   email: "ihza212325@gmail.com",
+                },
+                {
+                  email: "ulaaryoda.indonesia@gmail.com",
                 },
               ],
               subject: subject,
