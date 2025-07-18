@@ -1,0 +1,74 @@
+{
+  "timestamp": "2025-07-18T06:45:35.323Z",
+  "totalCount": 5,
+  "top5Results": [
+    {
+      "name": "WIRG",
+      "price": 101,
+      "sma": 96.15,
+      "selisih": 4.849999999999994
+    },
+    {
+      "name": "ISAT",
+      "price": 2360,
+      "sma": 2146.5375,
+      "selisih": 213.4625000000001
+    },
+    {
+      "name": "HEAL",
+      "price": 1670,
+      "sma": 1392.775,
+      "selisih": 277.2249999999999
+    },
+    {
+      "name": "WIFI",
+      "price": 2420,
+      "sma": 1239.25,
+      "selisih": 1180.75
+    },
+    {
+      "name": "SSIA",
+      "price": 2820,
+      "sma": 1123.75,
+      "selisih": 1696.25
+    }
+  ],
+  "scanInfo": {
+    "filters": [
+      {
+        "left": "close",
+        "operation": "greater",
+        "right": "SMA200"
+      },
+      {
+        "left": "change",
+        "operation": "greater",
+        "right": 0
+      },
+      {
+        "left": "average_volume_30d_calc",
+        "operation": "greater",
+        "right": 10000000
+      },
+      {
+        "left": "MACD.macd",
+        "operation": "greater",
+        "right": "MACD.signal"
+      },
+      {
+        "left": "volume",
+        "operation": "greater",
+        "right": "average_volume_30d_calc"
+      },
+      {
+        "left": "is_primary",
+        "operation": "equal",
+        "right": true
+      }
+    ],
+    "markets": [
+      "indonesia"
+    ],
+    "sortBy": "SMA200"
+  }
+}
