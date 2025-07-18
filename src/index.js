@@ -11,6 +11,28 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
+// Add health check endpoint
+app.get("/health", (req, res) => {
+  res.json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    service: "TradingView Scanner",
+  });
+});
+
+// Add self-ping every 5 seconds to prevent sleep
+setInterval(async () => {
+  try {
+    const response = await axios.get(
+      `https://sikuntul-production.up.railway.app/health`
+    );
+    console.log("Self-ping successful:", response.data.status);
+  } catch (error) {
+    console.log("Self-ping failed:", error.message);
+  }
+}, 5000); // 5 seconds
+
 cron.schedule("0 1 * * *", async () => {
   console.log("Running daily TradingView scanner at 8 AM WIB (1 AM UTC)");
 
