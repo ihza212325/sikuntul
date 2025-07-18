@@ -21,7 +21,7 @@ app.get("/health", (req, res) => {
   });
 });
 
-// Add self-ping every 5 seconds to prevent sleep
+// Add self-ping every 5 minutes to prevent sleep
 setInterval(async () => {
   try {
     const response = await axios.get(
@@ -31,7 +31,7 @@ setInterval(async () => {
   } catch (error) {
     console.log("Self-ping failed:", error.message);
   }
-}, 5000); // 5 seconds
+}, 5 * 60 * 1000); // 5 minutes
 
 cron.schedule("0 1 * * *", async () => {
   console.log("Running daily TradingView scanner at 8 AM WIB (1 AM UTC)");
