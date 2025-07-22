@@ -1,0 +1,50 @@
+{
+  "timestamp": "2025-07-22T07:10:05.621Z",
+  "totalCount": 1,
+  "top5Results": [
+    {
+      "name": "BTPSX",
+      "price": 1495,
+      "sma": 1082.6,
+      "selisih": 38
+    }
+  ],
+  "scanInfo": {
+    "filters": [
+      {
+        "left": "close",
+        "operation": "greater",
+        "right": "SMA200"
+      },
+      {
+        "left": "change",
+        "operation": "greater",
+        "right": 0
+      },
+      {
+        "left": "average_volume_30d_calc",
+        "operation": "greater",
+        "right": 10000000
+      },
+      {
+        "left": "MACD.macd",
+        "operation": "greater",
+        "right": "MACD.signal"
+      },
+      {
+        "left": "volume",
+        "operation": "greater",
+        "right": "average_volume_30d_calc"
+      },
+      {
+        "left": "is_primary",
+        "operation": "equal",
+        "right": true
+      }
+    ],
+    "markets": [
+      "indonesia"
+    ],
+    "sortBy": "SMA200"
+  }
+}

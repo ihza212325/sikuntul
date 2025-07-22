@@ -33,9 +33,7 @@ setInterval(async () => {
   }
 }, 5 * 60 * 1000); // 5 minutes
 
-cron.schedule("0 1 * * *", async () => {
-  console.log("Running daily TradingView scanner at 8 AM WIB (1 AM UTC)");
-
+const runScript = async () => {
   try {
     const requestBody = {
       columns: [
@@ -236,7 +234,7 @@ cron.schedule("0 1 * * *", async () => {
         const name = item.d[0]; // BREN
         const price = item.d[6]; // 7725
         const sma = item.d[12]; // 7178.7
-        const selisih = price - sma;
+        const selisih = Math.round(((price - sma) / sma) * 100);
 
         return {
           name: name,
@@ -336,9 +334,6 @@ cron.schedule("0 1 * * *", async () => {
                 {
                   email: "ihza212325@gmail.com",
                 },
-                {
-                  email: "ulaaryoda.indonesia@gmail.com",
-                },
               ],
               subject: subject,
               text: `Found ${
@@ -347,7 +342,7 @@ cron.schedule("0 1 * * *", async () => {
                 .slice(0, 5)
                 .map(
                   (stock) =>
-                    `${stock.name} - Price: ${stock.price}, SMA: ${stock.sma}, Difference: ${stock.selisih}`
+                    `${stock.name} - Price: ${stock.price}, SMA: ${stock.sma}, Difference: ${stock.selisih}%`
                 )
                 .join("\n")}`,
               html: `
@@ -361,7 +356,45 @@ cron.schedule("0 1 * * *", async () => {
                     .slice(0, 5)
                     .map(
                       (stock) =>
-                        `<li><strong>${stock.name}</strong> - Price: ${stock.price}, SMA: ${stock.sma}, Difference: ${stock.selisih}</li>`
+                        `<li><strong>${stock.name}</strong> - Price: ${stock.price}, SMA: ${stock.sma}, Difference: ${stock.selisih}%</li>`
+                    )
+                    .join("")}
+                </ul>
+              `,
+              category: "TradingView Scanner",
+            };
+            const mailOptions2 = {
+              from: {
+                email: "hello@demomailtrap.co",
+                name: "Medallion Fund",
+              },
+              to: [
+                {
+                  email: "ulaaryoda.indonesia@gmail.com",
+                },
+              ],
+              subject: subject,
+              text: `Found ${
+                response.data.totalCount
+              } stocks matching criteria\n\nTop 5 Results:\n${transformedData
+                .slice(0, 5)
+                .map(
+                  (stock) =>
+                    `${stock.name} - Price: ${stock.price}, SMA: ${stock.sma}, Difference: ${stock.selisih}%`
+                )
+                .join("\n")}`,
+              html: `
+                <h2>TradingView Scanner Results</h2>
+                <p>Found ${
+                  response.data.totalCount
+                } stocks matching criteria</p>
+                <h3>Top 5 Results:</h3>
+                <ul>
+                  ${transformedData
+                    .slice(0, 5)
+                    .map(
+                      (stock) =>
+                        `<li><strong>${stock.name}</strong> - Price: ${stock.price}, SMA: ${stock.sma}, Difference: ${stock.selisih}%</li>`
                     )
                     .join("")}
                 </ul>
@@ -370,7 +403,9 @@ cron.schedule("0 1 * * *", async () => {
             };
 
             // Send email using Mailtrap API
-            const sendEmailWithRetry = async (retries = 3) => {
+            const sendEmailWithRetry = async (retries = 1) => {
+              console.log("Sending email to Ihza");
+
               for (let i = 0; i < retries; i++) {
                 try {
                   const emailResponse = await axios.post(
@@ -400,9 +435,42 @@ cron.schedule("0 1 * * *", async () => {
                 }
               }
             };
+            const sendEmailWithRetry2 = async (retries = 1) => {
+              console.log("Sending email to Moden");
+
+              for (let i = 0; i < retries; i++) {
+                try {
+                  const emailResponse = await axios.post(
+                    "https://send.api.mailtrap.io/api/send",
+                    mailOptions2,
+                    {
+                      headers: {
+                        Authorization:
+                          "Bearer 2c9556d187df3ad60d1b91a5d03ae8ad",
+                        "Content-Type": "application/json",
+                      },
+                    }
+                  );
+                  console.log("Email sent successfully:", emailResponse.data);
+                  return;
+                } catch (error) {
+                  console.error(
+                    `Email attempt ${i + 1} failed:`,
+                    error.response?.data || error.message
+                  );
+                  if (i === retries - 1) {
+                    console.error("All email attempts failed");
+                  } else {
+                    // Wait 2 seconds before retry
+                    await new Promise((resolve) => setTimeout(resolve, 2000));
+                  }
+                }
+              }
+            };
 
             // Send email with retry logic
             sendEmailWithRetry();
+            sendEmailWithRetry2();
           }
         }
       } catch (error) {
@@ -419,6 +487,17 @@ cron.schedule("0 1 * * *", async () => {
   } catch (error) {
     console.error("Error making request to TradingView:", error.message);
   }
+};
+
+cron.schedule("0 1 * * *", async () => {
+  console.log("Running daily TradingView scanner at 8 AM WIB (1 AM UTC)");
+  runScript();
+});
+
+// Jam 12 siang WIB (5 AM UTC)
+cron.schedule("0 5 * * *", async () => {
+  console.log("Running TradingView scanner at 12 PM WIB (5 AM UTC)");
+  runScript();
 });
 
 app.listen(port, () => {
